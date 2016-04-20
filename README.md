@@ -15,88 +15,88 @@ Protože jsem zaznamenal ve zdrojácích agentů nečitelnou šílenost, všechn
 následující notací, aby bylo možné se v nich jednoznačně a snadno orientovat.
 
 formát souboru: 
+<pre>
+/* beleave base */
 
->/* beleave base */
->
->beleave(value).
->beleave2(value2, value3).
->
->/* initial goals */
->
->!goal1.
->!goal2.
->
->/* plans */
->
->@label[anotation]
->+!planA :
->  condition1 &
->  condition2
-><--
->  bodyOfPlan;
->  bodyOfPlan;
->
->  if (cond) {
->      something;
->
->      while (cond) {
->          something;
->          somethingElse;
->      }
->
->      somethingElse;
->  }
->
->  bodyOfPlan.
->// end planA
->
->
->+!planB : 
->  // krátký komentář k plánu planB, pokud není na první pohled jasné co vlastně planB dělá
->  condition1 &
->  condition2
-><--
->  bodyOfPlan;
->  bodyOfPlan;
->
->  if (cond & cond2) {
->      something;
->  }
->
->  if (veryLongLongCondition &
->      veryLongLongCondition2)
->  {
->      something;
->  }
->
->  bodyOfPlan.
->// end planB
->
->
->+!planC
->  true
-><--
->  bodyOfPlan;
->  bodyOfPlan;
->  bodyOfPlan.
->
->
->+event :
->  condition1 &
->  condition2
-><--
->  bodyOfPlan;
->  bodyOfPlan;
->  bodyOfPlan.
->
->
->+event : 
->  true
-><--
->  bodyOfPlan;
->  bodyOfPlan;
->  bodyOfPlan.
->
+beleave(value).
+beleave2(value2, value3).
+
+/* initial goals */
+
+!goal1.
+!goal2.
+
+/* plans */
+
+@label[anotation]
++!planA :
+  condition1 &
+  condition2
+<--
+  bodyOfPlan;
+  bodyOfPlan;
+
+  if (cond) {
+      something;
+
+      while (cond) {
+          something;
+          somethingElse;
+      }
+
+      somethingElse;
+  }
+
+  bodyOfPlan.
+// end planA
+
+
++!planB : 
+  // krátký komentář k plánu planB, pokud není na první pohled jasné co vlastně planB dělá
+  condition1 &
+  condition2
+<--
+  bodyOfPlan;
+  bodyOfPlan;
+
+  if (cond & cond2) {
+      something;
+  }
+
+  if (veryLongLongCondition &
+      veryLongLongCondition2)
+  {
+      something;
+  }
+
+  bodyOfPlan.
+// end planB
+
+
++!planC
+  true
+<--
+  bodyOfPlan;
+  bodyOfPlan;
+  bodyOfPlan.
+
+
++event :
+  condition1 &
+  condition2
+<--
+  bodyOfPlan;
+  bodyOfPlan;
+  bodyOfPlan.
+
+
++event : 
+  true
+<--
+  bodyOfPlan;
+  bodyOfPlan;
+  bodyOfPlan.
+</pre>
 
 Pro plány planA a planB platí že mají dlouhé tělo nebo mají v sobě podmínky a cykly, kolem nichž se vynechává
 prázdný řádek. Aby bylo na první pohled patrné kde končí, bude za jejich koncem následovat komentář, že tam skutečně
