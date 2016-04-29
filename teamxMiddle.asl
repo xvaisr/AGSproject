@@ -1,25 +1,47 @@
-factorial(0,1).
-factorial(N,F) :- factorial(N-1,F1) & F = N*F1.
 
-!start.
-!printfact5.
-+!start : .my_name(Name) & .substring("a",Name,0) <- +side("a").
-+!start : .my_name(Name) & .substring("b",Name,0) <- +side("b").
+!discover.
 
 
-@p1[atomic]
-+!printfact5 : .my_name(aMiddle) <- ?factorial(5,F);
-				+hodnota_faktorialu(5,F);
-				.print("Factorial(5) = ", F).
++!go_to(A,B): moves_left(0)<-!go_to(A,B).
++!go_to(A,B):pos(X,Y) & X<A <- do(right);!go_to(A,B).
++!go_to(A,B):pos(X,Y) & X>A <- do(left);!go_to(A,B).
++!go_to(A,B):pos(X,Y) & Y<B <- do(down);!go_to(A,B).
++!go_to(A,B):pos(X,Y) & Y>B <- do(up);!go_to(A,B).
++!go_to(A,B) .
+//+!go_to(A,B)<-do(skip);!go_to.
 
-+hodnota_faktorialu(X,F) <-.print("Ulozeno fact(", X, ")=",F).
-@p2[atomic]
-+!printfact5  <- .print("Nejsem agentA, nereknu nic").
++!discover :  grid_size(MaxX,MaxY) <- 
+    for (.range(Y, 0, MaxY-1)) // Cyklus pres viditelne bunky
+    {
+	if((Y mod 3) == 0){
+        for (.range(X, 0, MaxX-1))
+        {
+		!go_to(X,Y); !findAll; 
+		}
+	}
+    } 
+!collectGold;!collectWood.
+	//!collect.
 
++!findAll: gold(X,Y) & not goldAt(X,Y) <-  +goldAt(X,Y);.print("GOLD HERE",X,Y).
 
-+step(X) <- !akce1;!akce2;do(skip);do(skip).
-+!akce1 : friend(F) & .substring("Slow",F) <- .print("I have a friend: ", F, " and he is a slow type").
-+!akce1 : friend(F) & .substring("Fast",F) <- .print("I have a friend: ", F, " and he is a fast type").
-+!akce1 : friend(F) & .substring("Middle",F) <- .print("I have a friend: ", F, " and he is a middle type").
++!findAll: wood(X,Y) & not woodAt(X,Y) <- +woodAt(X,Y).
++!findAll: obstacle(X,Y) & not obstacleAt(X,Y) <- +obstacleAt(X,Y).
++!findAll.
 
-+!akce2 <- .my_name(Name);?side(Side);.print("I am: ", Name, " on side: ", Side).
++!collectGold:goldAt(X,Y) & not carrying_gold(4) <-!go_to(X,Y); .abolish(goldAt(X,Y)); !try_pick; !collectGold.
++!collectGold: carrying_gold(4) <- !try_depo;!collectGold.
++!collectGold: not carrying_gold(0) <- !try_depo.
++!collectGold.
+
++!collectWood:woodAt(X,Y) & not carrying_wood(4) <-!go_to(X,Y); .abolish(woodAt(X,Y)); !try_pick; !collectWood.
++!collectWood: carrying_wood(4) <- !try_depo;!collectWood.
++!collectWood: not carrying_wood(0) <- !try_depo.
++!collectWood.
+
++!try_pick: pos(X,Y) & moves_left(2)  & ally(X,Y) <- do(pick).
++!try_pick<-do(skip);!try_pick.
+
++!try_depo: moves_left(2) <-do(drop).
++!try_depo<-do(skip);!try_depo.
+
