@@ -1,4 +1,3 @@
-
 !discover.
 
 
@@ -13,33 +12,33 @@
 +!discover :  grid_size(MaxX,MaxY) <- 
     for (.range(Y, 0, MaxY-2)) // Cyklus pres viditelne bunky
     {
-	if((Y mod 3) == 0){
-        for (.range(X, 1, MaxX-2))
-        {
-		!go_to(X,Y); !findAll; 
+		if((Y mod 3) == 0){
+      	  for (.range(X, 1, MaxX-2))
+		  {
+				!go_to(X,Y); !findAll; 
+		   }
 		}
-	}
     } 
 !collectGold;!collectWood.
-	//!collect.
 
-+!findAll: gold(X,Y) & not goldAt(X,Y) <-  +goldAt(X,Y);.print("GOLD HERE",X,Y).
-
++!findAll: gold(X,Y) & not goldAt(X,Y) <-  +goldAt(X,Y).
 +!findAll: wood(X,Y) & not woodAt(X,Y) <- +woodAt(X,Y).
 +!findAll: obstacle(X,Y) & not obstacleAt(X,Y) <- +obstacleAt(X,Y).
 +!findAll.
 
-+!collectGold:goldAt(X,Y) & not carrying_gold(4) <-!go_to(X,Y); .abolish(goldAt(X,Y)); !try_pick; !collectGold.
-+!collectGold: carrying_gold(4) <- !try_depo;!collectGold.
-+!collectGold: not carrying_gold(0) <- !try_depo.
++!collectGold:goldAt(X,Y)  & not carrying_gold(4) <-!go_to(X,Y); !try_pick; .abolish(goldAt(X,Y));  !collectGold.
++!collectGold: carrying_gold(4) & depot(X,Y)<- !go_to(X,Y); !try_depo;!collectGold.
++!collectGold: not carrying_gold(0) & depot(X,Y)<- !go_to(X,Y); !try_depo.
 +!collectGold.
 
-+!collectWood:woodAt(X,Y) & not carrying_wood(4) <-!go_to(X,Y); .abolish(woodAt(X,Y)); !try_pick; !collectWood.
-+!collectWood: carrying_wood(4) <- !try_depo;!collectWood.
-+!collectWood: not carrying_wood(0) <- !try_depo.
++!collectWood:woodAt(X,Y) & not carrying_wood(4) <-!go_to(X,Y); !try_pick; .abolish(woodAt(X,Y));  !collectWood.
++!collectWood: carrying_wood(4) & depot(X,Y)<- !go_to(X,Y);!try_depo;!collectWood.
++!collectWood: not carrying_wood(0) & depot(X,Y)<- !go_to(X,Y); !try_depo.
 +!collectWood.
 
-+!try_pick: pos(X,Y) & moves_left(2)  & ally(X,Y) <- do(pick).
++!try_pick:pos(X,Y) & not gold(X,Y) & not wood(X,Y) .
+//+!try_pick: pos(X,Y) & moves_left(2) & ally(X,Y) <- do(pick).
++!try_pick: pos(X,Y) & moves_left(2) <- do(pick).
 +!try_pick<-!blank;!try_pick.
 
 
