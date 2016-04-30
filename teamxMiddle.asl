@@ -11,10 +11,10 @@
 //+!go_to(A,B)<-do(skip);!go_to.
 
 +!discover :  grid_size(MaxX,MaxY) <- 
-    for (.range(Y, 0, MaxY-1)) // Cyklus pres viditelne bunky
+    for (.range(Y, 0, MaxY-2)) // Cyklus pres viditelne bunky
     {
 	if((Y mod 3) == 0){
-        for (.range(X, 0, MaxX-1))
+        for (.range(X, 1, MaxX-2))
         {
 		!go_to(X,Y); !findAll; 
 		}
@@ -40,8 +40,12 @@
 +!collectWood.
 
 +!try_pick: pos(X,Y) & moves_left(2)  & ally(X,Y) <- do(pick).
-+!try_pick<-do(skip);!try_pick.
++!try_pick<-!blank;!try_pick.
+
 
 +!try_depo: moves_left(2) <-do(drop).
-+!try_depo<-do(skip);!try_depo.
++!try_depo<-!blank;!try_depo.
 
++!blank: moves_left(2) <- do(skip);do(skip).
++!blank: moves_left(1) <- do(skip).
++!blank.
