@@ -1,11 +1,13 @@
 /* beliefbase */
 
 discovered(false).
-
+inc(X,Y)	:-	Y = X+1.
+inc2(X,Y)	:-	Y = X+2.
+dec(X,Y)	:-	Y = X-1.
+dec2(X,Y)	:-	Y = X-2.
 /* initial goals */
 
 !start. 
-!explore.
 
 /* plans */
 
@@ -31,19 +33,9 @@ discovered(false).
     +friendMiddle(Y);.
 //end of start b
 
-+?seen(A,B) :
-    pos(X,Y)
-<- 
-    if( A > X ){ TargetA = (A-1); } 
-    if( A < X ){ TargetA = (A+1); }
-    if( B > Y){ TargetB = (B-1); }
-    if( B < Y ){ TargetB = (B+1); }
-    if( A == X ) { TargetA = A; } 
-    if( B==Y ){ TargetB=B; }
-    !go_toB(TargetA,TargetB);.
-//end of seen
+
     
-+!go_toB(A,B):  
++!go_to(A,B):  
     true 
 <-  
     while(pos(X,Y) & ( A\==X | B\==Y )){
@@ -74,26 +66,11 @@ discovered(false).
         if( C > 2 ){ do(skip); }
     }//if 
     .
-//end of go_toB
+//end of go_to
     
                       
-//+step(X) <- .print("step",X).
 
-
-//Explore the whole playing field
-+!explore: 
-    moves_left(Moves) & 
-    Moves > 0 
-<- 
-    ?grid_size(MaxX,MaxY);
-    for(.range(Y,0,(MaxY-1))){
-        for(.range(X,0,(MaxX-1))){
-            ?seen(X,Y);
-        }//forX
-    }//forY
-    +discovered(true);
-    !collect.
-//end of explore
+	
                                             
 //At depot, deposit or wait for next round
 +!depos: 
@@ -258,6 +235,27 @@ discovered(false).
     +seen(Left,Bottom); +seen(X,Bottom);    +seen(Right,Bottom);.
 //end of check_area
 
-
++step(N):
+	discovered(Is) &
+	Is\==True &
+	grid_size(MaxX,MaxY)
+<-
+	for(.range(Counter,0,2)){
+		!check_area;
+		if( pos(A,B) & A>1 & not seen(A-2,B) ){
+			do(left);
+		}else{ 
+		if( pos(A,B) & B>1 & not seen(A,B-2) ){
+			do(up);
+		}else{
+		if( pos(A,B) & A<MaxX-2 & not seen(A+2,B) ){
+			do(right);		
+		}else{
+		if( pos(A,B) & B<MaxY-2 & not seen(A,B+2) ){
+			do(down);	
+		}
+		}}}
+	}
+	.
                       
                              
