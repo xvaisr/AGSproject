@@ -7,7 +7,6 @@ dec(X,Y)	:-	Y = X-1.
 dec2(X,Y)	:-	Y = X-2.
 /* initial goals */
 
-!start. 
 
 /* plans */
 
@@ -33,208 +32,190 @@ dec2(X,Y)	:-	Y = X-2.
     +friendMiddle(Y);.
 //end of start b
 
+//Explore the whole playing field
++!explore:
+	grid_size(MaxX,MaxY)
+<- 
+    for(.range(Y,1,(MaxY-2))){
+        for(.range(X,1,(MaxX-2))){
+			+explore(X,Y);
+        }//forX
+    }//forY
+	.
+//end of explore
+                    
+                   
++!unexplore(X,Y)
+<- 
+	.abolish(explore(X,Y));
+.
 
-    
-+!go_to(A,B):  
-    true 
-<-  
-    while(pos(X,Y) & ( A\==X | B\==Y )){
-        while(moves_left(Moves) & Moves\==0 & pos(CurrX,CurrY) & ( A\==CurrX | B\==CurrY )){ 
-            if( A \== CurrX ){ 
-                if( A > CurrX ){ 
-                    do(right); 
-                }else{ 
-                    do(left);
-                }//if-else
-            }else {
-                if(B\==CurrY){ 
-                    if( B > CurrY) { 
-                        do(down);
-                    }else { 
-                        do(up);
-                    }//if-else
-                }//if-else
-            }//if-else
-            if( discovered(IsIt) & IsIt \== true ){
-                !check_area;
-            }
-        }//while
-    }//while
-    if( moves_left(C) & C > 0 ){
-        do(skip); 
-        if( C > 1 ){ do(skip); }
-        if( C > 2 ){ do(skip); }
-    }//if 
-    .
-//end of go_to
-    
-                      
 
++!check_area:
+	discovered(Is) &
+	Is == true &
+	pos(X,Y)
+<-
+	for(.range(CurrX,X-1,X+1)){
+		for(.range(CurrY,Y-1,Y+1)){
+			if(wood_at(CurrX,CurrY) & not wood(CurrX,CurrY)){
+				.abolish(wood_at(CurrX,CurrY));
+			}
+			if(gold_at(CurrX,CurrY) & not gold(CurrX,CurrY)){
+				.abolish(gold_at(CurrX,CurrY));
+			}
+		}
+	}
+.
+
+/* Unexplore the 9 cells I see and if there are wood or gold add it to BB */
++!check_area: 
+    pos(X,Y) &
+	friendSlow(Slow) &
+	friendMiddle(Middle)
+<-
+    Left    =   X-1; 
+    Right   =   X+1;
+    Top     =   Y+1;
+    Bottom  =   Y-1;
+	for(.range(CurrX,X-1,X+1)){
+		for(.range(CurrY,Y-1,Y+1)){
+			!unexplore(CurrX,CurrY);
+			.send(Slow,achieve,unexplore(CurrX,CurrY));
+			.send(Middle,achieve,unexplore(CurrX,CurrY));
+		}
+	}
+	while(wood(AtX,AtY)){
+		+wood_at(AtX,AtY);
+		.send(Middle,tell,wood_at(AtX,AtY));
+		.abolish(wood(AtX,AtY));
+	}
+	while(gold(AtX,AtY)){
+		+gold_at(AtX,AtY);
+		.send(Middle,tell,gold_at(AtX,AtY));
+		.abolish(gold(AtX,AtY));
+	}
+	if(not explore(_,_)){
+		.abolish(discovered(_));
+		+discovered(true);
+	}
+.
+
+//end of check_area
+
++!move_towards(X,Y):
+	moves_per_round(C)
+<-
+	for(.range(Counter,1,C)){
+		!check_area;
+		if( pos(A,B) & A>X){
+			do(left);
+		}else{ 
+		if( pos(A,B) & B>Y){
+			do(up);
+			}else{
+		if( pos(A,B) & A<X){
+			do(right);		
+			}else{
+		if( pos(A,B) & B<Y){
+			do(down);	
+		}else{
+			do(skip);}
+		}}}
+	}//for
+.
+
++step(N):
+	carrying_capacity(Cap) &
+	carrying_gold(Gold) &
+	carrying_wood(Wood) &
+	( Cap == Gold | Cap == Wood) &
+	depot(X,Y) &
+	pos(CA,CB) 
+<-
+	.print("I am Full");
+	if(CA\==X | CB\==Y){
+		!move_towards(X,Y);
+	}else{
+		do(drop);
+	}
+	.
+
++step(N):
+	carrying_capacity(Cap) &
+	carrying_gold(Gold) &
+	Cap == Gold &
+	depot(X,Y) &
+	pos(CA,CB) 
+<-
+	.print("I am Full");
+	if(CA\==X | CB\==Y){
+		!move_towards(X,Y);
+	}else{
+		do(drop);
+	}
+	.
 	
-                                            
-//At depot, deposit or wait for next round
-+!depos: 
-    pos(X,Y) &
-    depot(DX,DY) &
-    moves_left(Mov) &
-    moves_per_round(Total) &
-    X==DX &
-    Y==DY
-<-  if ( Mov==Total){
-        do(drop);
-    }else{
-        while (moves_left(A) & A\==0) {
-            do(skip);
-        }//while
-        !depos
-    }//if
-    .
-//end of depos
-
-
-+!depos: 
-    pos(X,Y) &
-    depot(DX,DY) &
-    X\==DX &
-    Y\==DY 
-<- 
-    !go_toB(DX,DY);
-    !depos.
-//end of depos                                          
-
-+!depos:
-    true
++step(N):
+	gold_at(X,Y) &
+	pos(A,B) &
+	ally(FX,FY) &
+	carrying_wood(WC) &
+	WC==0 &
+	A==X &
+	B==Y &
+	FX==A &
+	FY==B
 <-
-    .print("This shouldn't happen to be honest");
-    .
-                                                                    
-+!collect: 
-    pos(X,Y) &
-    wood_at(WoodX,WoodY) &
-    //ally(A,B) &
-    WoodX==X &
-    WoodY==Y &  
-    moves_left(Moves) &
-    Moves==3 
+	.abolish(gold_at(X,Y));
+	do(pick);
+.
+	
++step(N):
+	gold_at(X,Y) &
+	pos(A,B) &
+	carrying_wood(WC) &
+	WC==0
 <-
-    do(pick); 
-    .abolish(wood_at(WoodX,WoodY));
-    if (carrying_capacity(Carry) & carrying_wood(Wood) & Carry == Wood ) {
-        !depos;
-    }//if
-    !collect.
-//print end of collect
-
-+!collect: 
-    pos(X,Y) & 
-    wood_at(WoodX,WoodY) & 
-    X==WoodX &
-    Y==WoodY 
+	!move_towards(X,Y);
+.
+	
++step(N):
+	wood_at(X,Y) &
+	pos(A,B) &
+	ally(FX,FY) &
+	carrying_gold(GC) &
+	GC==0 &
+	A==X &
+	B==Y &
+	FX==A &
+	FY==B
 <-
-    while (moves_left(A) & A\==0) {
-            do(skip);
-    }//while
-    !collect.
-//print end of collect
+	.abolish(wood_at(X,Y));
+	do(pick);
+.
 
-+!collect: 
-    pos(X,Y) & 
-    wood_at(WoodX,WoodY)
++step(N):
+	wood_at(X,Y) &
+	pos(A,B) &
+	carrying_gold(GC) &
+	GC==0
 <-
-    !go_toB(WoodX,WoodY);
-    !collect.   
-//print end of collect
-
-+!collect: 
-    pos(X,Y) &
-    gold_at(GoldX,GoldY) & 
-    GoldX == X &
-    GoldY == Y &
-    moves_left(Moves) &
-    Moves==3
-<- 
-    do(pick); 
-    .abolish(gold_at(GoldX,GoldY));
-    if( carrying_capacity(Carry) & carrying_gold(Gold) & Carry == Gold ){ 
-        !depos; 
-    }
-    !collect.
-//print end of collect
-
-+!collect:
-    pos(X,Y) &
-    gold_at(GoldX,GoldY) &
-    X==GoldX & 
-    Y==GoldY  
-<-  
-    while ( moves_left(A) & A\==0 ) {
-        do(skip);
-    }//while
-    !collect.   
-//print end of collect
-                                                        
-+!collect: 
-    pos(X,Y) &
-    gold_at(GoldX,GoldY)
-<- 
-    if( carrying_wood(Gold) & Gold\==0 ){
-        !depos;
-    }
-    !go_toB(GoldX,GoldY);
-    !collect.
-//print end of collect
-
-+!collect: 
-    true 
-<- 
-    .print("Collecting done");.
-//print end of collect
-                         
-
-+!check_area: 
-    pos(X,Y) &
-    gold(A,B) 
-<- 
-    Left    =   X-1; 
-    Right   =   X+1;
-    Top     =   Y+1;
-    Bottom  =   Y-1;
-//add the 8 cells around you to the BB
-    +seen(Left,Top);    +seen(X,Top);       +seen(Right,Top);
-    +seen(Left,Y);                          +seen(Right,Y);
-    +seen(Left,Bottom); +seen(X,Bottom);    +seen(Right,Bottom);
-    +gold_at(A,B);.
-//end of check_area
-
-
-+!check_area: 
-    pos(X,Y) &
-    wood(A,B) 
+	!move_towards(X,Y);
+.
++step(N): 
+	explore(X,Y) &
+	moves_per_round(C)
 <-
-    Left    =   X-1; 
-    Right   =   X+1;
-    Top     =   Y+1;
-    Bottom  =   Y-1;
-//add the 8 cells around you to the BB
-    +seen(Left,Top);    +seen(X,Top);       +seen(Right,Top);
-    +seen(Left,Y);                          +seen(Right,Y);
-    +seen(Left,Bottom); +seen(X,Bottom);    +seen(Right,Bottom);
-    +wood_at(A,B);  .
-//end of check_area
+	!move_towards(X,Y);
+.
 
-
-+!check_area: 
-    pos(X,Y) 
++step(0)
 <-
-    Left    =   X-1; 
-    Right   =   X+1;
-    Top     =   Y+1;
-    Bottom  =   Y-1;
-    +seen(Left,Top);    +seen(X,Top);       +seen(Right,Top);
-    +seen(Left,Y);                          +seen(Right,Y);
-    +seen(Left,Bottom); +seen(X,Bottom);    +seen(Right,Bottom);.
-//end of check_area
-
+	!start;
+	!explore;
+	+step(-1).
+/*
 +step(N):
 	discovered(Is) &
 	Is\==True &
@@ -257,5 +238,5 @@ dec2(X,Y)	:-	Y = X-2.
 		}}}
 	}
 	.
-                      
+    */                  
                              
