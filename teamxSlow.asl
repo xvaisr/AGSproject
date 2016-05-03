@@ -28,9 +28,9 @@ able(down) :- pos(MyX, MyY) & grid_size(MaxX,MaxY) & not (obstacle(MyX, MyY+1) |
     +friendMiddle(Y);.
 
 
-+!go_to(A,B):pos(X,Y) & X<A <- do(right);!findAll;!seen(X,Y).
-+!go_to(A,B):pos(X,Y) & X>A <- do(left);!findAll;!seen(X,Y).
-+!go_to(A,B):pos(X,Y) & Y<B <- do(down);!findAll;!seen(X,Y).
++!go_to(A,B):pos(X,Y) & X<A <- do(right);!findAll;!seen(X,Y).						
++!go_to(A,B):pos(X,Y) & X>A <- do(left);!findAll;!seen(X,Y).								
++!go_to(A,B):pos(X,Y) & Y<B <- do(down);!findAll;!seen(X,Y).								
 +!go_to(A,B):pos(X,Y) & Y>B <- do(up);!findAll;!seen(X,Y).
 +!go_to(A,B):go(A,B) <-.abolish(go(A,B));do(skip).
 +!go_to(A,B):explore(A,B) <-.abolish(explore(A,B));do(skip).
@@ -42,13 +42,13 @@ able(down) :- pos(MyX, MyY) & grid_size(MaxX,MaxY) & not (obstacle(MyX, MyY+1) |
     {
 		for (.range(Y, 1,(MaxY-2)/2)) {
       	  
-				if( not explore(X,Y) ) { +explore(X,Y)};
+				if( not explore(X,Y) & not obstacle(X,Y) ) { +explore(X,Y)};
 			
 		}
 		
 		for (.range(Y, (MaxY-2)/2,MaxY-2)) {
       	  
-				if( not explore(X,Y) ) { +explore(X,Y)};
+				if( not explore(X,Y) & not obstacle(X,Y)  ) { +explore(X,Y)};
 				}
 			
 		
@@ -67,10 +67,11 @@ able(down) :- pos(MyX, MyY) & grid_size(MaxX,MaxY) & not (obstacle(MyX, MyY+1) |
 										 }
 									  }.
 
-+!findAll: gold(X,Y) & not goldAt(X,Y) & friendMiddle(Middle) <- .print("GOLD AT:",X,Y);+goldAt(X,Y); .send(Middle,tell,goldAt(X,Y)).
++!findAll: gold(X,Y) & not goldAt(X,Y) & friendMiddle(Middle) <- +goldAt(X,Y); .send(Middle,tell,goldAt(X,Y)).
 +!findAll: spectacles(X,Y) & not spectaclesAt(X,Y) & not glass <-  +go(X,Y);  +spectaclesAt(X,Y).
 +!findAll: wood(X,Y) & not woodAt(X,Y) & friendMiddle(Middle) <-+woodAt(X,Y); .send(Middle,tell,woodAt(X,Y)).
 +!findAll: obstacle(X,Y) & not obstacleAt(X,Y) & friendMiddle(Middle) <-+obstacleAt(X,Y); .send(Middle,tell,obstacleAt(X,Y)).
 +!findAll.
+
 
 

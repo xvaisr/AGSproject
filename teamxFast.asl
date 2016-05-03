@@ -7,7 +7,8 @@
 +!go_to(A,B):pos(X,Y) & X>A <- do(left).
 +!go_to(A,B):pos(X,Y) & Y<B <- do(down).
 +!go_to(A,B):pos(X,Y) & Y>B <- do(up).
-+!go_to(A,B) <-.abolish(go(A,B));do(skip).
++!go_to(A,B):go(A,B) <-.abolish(go(A,B));do(skip).
++!go_to(A,B) <-do(skip).
 
 +!start : 
     .my_name(Name) & 
