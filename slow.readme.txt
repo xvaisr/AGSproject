@@ -32,3 +32,6 @@ midCarry("gold");
 midCarry("wood");
 fastCarry("gold");
 fastCarry("wood");
+
+
+Pripade muzeme collectovat ruzne resources s ruznymi agentmi
