@@ -1,0 +1,34 @@
+Slow, by mohl ukladat collecting(W/G,X,Y) kde X,Y je pozice kam prave idu middle a fast a W/G je ze ci idu zbirat gold ci wood.
+
+Middle a Fast jedu za collect(X,Y) bez znalosti toho co si idu pickovat a ked maju collect idu zbirat.
+A ked pride +wood_at / + gold_at tak by si mohl vypocitat ci sa agenti dostanu rychleji K nove nalezenemu wood/gold a kdyz jo tak poslat jim novy collect(X,Y).
+
+
+Fast a Middle co jsem implementoval ja posilaju:
+
+fastPos(X,Y)
+midPos(X,Y)
+
+
+Na co slow co jsem psal reaguje s updatovanim pozice:
+
++!fastPos(X,Y)
+<-
+	.abolish(fastPos(_,_));
+	+fastPos(X,Y);
+.
+
+
++!midPos(X,Y)
+<-
+	.abolish(midPos(_,_));
+	+midPos(X,Y);
+.
+
+
+A taky posielaju co si vezu prave:
+
+midCarry("gold");
+midCarry("wood");
+fastCarry("gold");
+fastCarry("wood");
