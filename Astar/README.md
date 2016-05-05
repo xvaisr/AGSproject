@@ -1,0 +1,6 @@
+#A* Vizualizace a odzkoušení algoritmu
+
+Pro odzkoušení A* algoritmu můžete jít do adresáře Vizualize a do stejnojmenného souboru ...
+Na konci souboru je metoda getPainter kde lze změnit parametry toho jak proběhne zobrazení A*.
+Lze nastavit počáteční pozici a cílovou pozici. Třída grid má zkopírované 3 mapy z projektu,
+konkrétně to jsou 2, 5 a 6 ... 4 se mi nepodařilo vytáhnout ...
