@@ -68,12 +68,12 @@ public class Vizualize {
         Point start, dest;
         
         // Point(x, y);
-        start = new Point(0, 0);
+        start = new Point(6, 27);
         dest = new Point(39, 39);
         
+        Grid.setWorld2(g);
         path = Astar.Astar.getPath(start, dest, g);
         
-        Grid.setWorld2(g);
         return new Painter(start, dest, g, path);
         
     }
