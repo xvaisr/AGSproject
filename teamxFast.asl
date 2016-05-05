@@ -114,6 +114,18 @@ dec2(X,Y)	:-	Y = X-2.
 		.send(Middle,tell,spec_at(AtX,AtY));
 		.abolish(spectacles(AtX,AtY));
 	}
+	while(spectacles(AtX,AtY)){
+		+spec_at(AtX,AtY);
+		.send(Slow,tell,spec_at(AtX,AtY));
+		.send(Middle,tell,spec_at(AtX,AtY));
+		.abolish(spectacles(AtX,AtY));
+	}
+	while(obstacle(AtX,AtY)){
+		+obstacle_at(AtX,AtY);
+		.send(Slow,tell,obstacle_at(AtX,AtY));
+		.send(Middle,tell,obstacle_at(AtX,AtY));
+		.abolish(obstacle(AtX,AtY));
+	}
 .
 //end of check_area
 
@@ -162,7 +174,7 @@ dec2(X,Y)	:-	Y = X-2.
 	}else{
 	//Target is to the left and up
 	if( pos(A,B) & A>X & B>Y){
-		//Distance to left more than 1 and more than upwards.
+		//Distance to left more than 1 and more than down.
 		if(A-X > 1 & A-X > B-Y){
 			do(left);
 			do(down);
