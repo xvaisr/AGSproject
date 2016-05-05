@@ -121,6 +121,58 @@ dec2(X,Y)	:-	Y = X-2.
 +!move_towards(X,Y):
 	moves_per_round(C)
 <-
+	//Target is to the left and up
+	if( pos(A,B) & A>X & B>Y){
+		//Distance to left more than 1 and more than up.
+		if(A-X > 1 & A-X > B-Y){
+			do(left);
+			do(up);
+			do(left);
+		}else{
+			do(up);
+			do(left);
+			do(up);		
+		}
+	}else{ 	
+	//Target to the right and up
+	if( pos(A,B) & A<X & B>Y){
+		//Distance to right more than 1 dist and more than up.
+		if(X-A > 1 & X-A > B-Y){
+			do(right);
+			do(up);
+			do(right);
+		}else{
+			do(up);
+			do(right);
+			do(up);		
+		}	
+	}else{
+	//Target to the right and down
+	if( pos(A,B) & A<X & B<Y){
+		//Distance to right more than 1 dist and more than down.
+		if(X-A > 1 & X-A > B-Y){
+			do(right);
+			do(down);
+			do(right);
+		}else{
+			do(down);
+			do(right);
+			do(down);		
+		}	
+	}else{
+	//Target is to the left and up
+	if( pos(A,B) & A>X & B>Y){
+		//Distance to left more than 1 and more than upwards.
+		if(A-X > 1 & A-X > B-Y){
+			do(left);
+			do(down);
+			do(left);
+		}else{
+			do(up);
+			do(down);
+			do(up);		
+		}
+	}else{ 	
 	for(.range(Counter,1,C)){
 		!check_area;
 		if( pos(A,B) & A>X){
@@ -128,16 +180,17 @@ dec2(X,Y)	:-	Y = X-2.
 		}else{ 
 		if( pos(A,B) & B>Y){
 			do(up);
-			}else{
+		}else{
 		if( pos(A,B) & A<X){
 			do(right);		
-			}else{
+		}else{
 		if( pos(A,B) & B<Y){
 			do(down);	
 		}else{
 			do(skip);}
 		}}}
 	}//for
+	}}}}
 .
 //end of move_towards
 
