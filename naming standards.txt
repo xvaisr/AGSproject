@@ -1,0 +1,26 @@
+/* Naming for adding and picking from BB */
+
+//Resources
+wood_at(X,Y) - add wood(X,Y) permamently
+gold_at(X,Y) - add gold(X,Y) permamently 
+spec_at(X,Y) - add spectacles(X,Y) permamently 
+obstacle_at(X,Y) - add obstacle(X,Y) permamently 
+
+//Friends
+
+friendSlow(Slow)
+friendMiddle(Middle)
+friendFast(Fast)
+
+//What friends do
+//Position
+fastPos(X,Y)
+midPos(X,Y)
+//currently carrying
+fastCarry("gold")
+midCarry("wood")
+
+//Telling friends what to do in order of priority of execution
+go_to(X,Y) - go to X,Y and wait for slow  //not sure if need 2 for that
+depos 	   - go deposit resources at the depot
+collect(X,Y) - collect resources from X,Y 	//Up to slow to make sure we are not picking conflicting resources
