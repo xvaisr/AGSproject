@@ -281,12 +281,15 @@ dec2(X,Y)	:-	Y = X-2.
 		+depos;
 	}
 .
+
 //If I get to the collect position and nothings there, abolish collect
 +step(N):
 	collect(X,Y) &
-	pos(X,Y) &
+	pos(A,B) &
 	friendSlow(Slow) &
 	friendMiddle(Middle) &
+	math.abs(A-X) < 2 &
+	math.abs(B-Y) < 2 &
 	not wood(X,Y) &
 	not gold(X,Y)
 <- 
