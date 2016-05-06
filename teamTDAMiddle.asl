@@ -25,8 +25,8 @@
 +!explore:
 	grid_size(MaxX,MaxY)
 <- 
-    for(.range(Y,0,(MaxY-1))){
-        for(.range(X,0,(MaxX-1))){
+    for(.range(X,0,(MaxX-1))){
+        for(.range(Y,0,(MaxY-1))){
 			+explore(X,Y);
         }//forX
     }//forY
@@ -52,20 +52,10 @@
 <-
 	for(.range(CurrX,X-1,X+1)){
 		for(.range(CurrY,Y-1,Y+1)){
-			if(wood_at(CurrX,CurrY) & not wood(CurrX,CurrY)){
+			if(wood_at(CurrX,CurrY) & not wood(CurrX,CurrY) & not gold(CurrX,CurrY)){
 				!picked(X,Y);
-				.send(Slow,achieve,picked_w(CurrX,CurrY));
+				.send(Slow,achieve,picked(CurrX,CurrY));
 				.send(Fast,achieve,picked(CurrX,CurrY));
-			}
-			if(gold_at(CurrX,CurrY) & not gold(CurrX,CurrY)){
-				!picked(X,Y);
-				.send(Slow,achieve,picked_g(CurrX,CurrY));
-				.send(Fast,achieve,picked(CurrX,CurrY));
-			}
-			if(spec_at(CurrX,CurrY) & not spectacles(CurrX,CurrY)){
-				.abolish(spec_at(CurrX,CurrY));
-				.send(Slow,achieve,picked_s(CurrX,CurrY));
-			}
 		}
 	}
 .*/
@@ -105,6 +95,10 @@
 .
 //end of check_area
 //Move towards coordinates
++!move_towards(A,B):
+	pos(A,B)
+<-
+	do(skip);do(skip);.
 +!move_towards(A,B):
 	moves_per_round(C)
 <-

@@ -121,6 +121,10 @@
 
 //Move towards coordinates
 +!move_towards(A,B):
+	pos(A,B)
+<-
+	do(skip);.
++!move_towards(A,B):
 	moves_per_round(C)
 <-
 	for(.range(Counter,1,C)){
