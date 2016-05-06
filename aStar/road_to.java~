@@ -1,0 +1,98 @@
+// Internal action code for project jasonTeam.mas2j
+
+
+
+package aStar;
+
+
+
+import jason.*;
+import jason.asSemantics.Unifier;
+import jason.asSyntax.Term;
+import jason.asSemantics.*;
+
+import jason.asSyntax.*;
+import java.awt.Point;
+import java.util.HashMap;
+
+public class road_to extends DefaultInternalAction {
+	
+	
+	private static HashMap<String, Grid> h;
+	
+    @Override
+	
+    public Object execute(TransitionSystem ts, Unifier un, Term[] args) throws Exception {
+		
+        // execute the internal action
+		//road_to(Sx, Sy, Dx, Dy, K, L)
+        ts.getAg().getLogger().info("executing internal action 'aStar.road_to'");
+		int x = (int)((NumberTerm) args[0]).solve();
+		int y = (int)((NumberTerm) args[1]).solve();
+		
+		Point s = new Point(x,y);
+		
+		int x = (int)((NumberTerm) args[2]).solve();
+		int y = (int)((NumberTerm) args[3]).solve();
+		
+		Point d = new Point(x,y);
+		
+		String agent = ts.getUserAgArch().getAgName();
+		Grid grid1;
+		if(!road_to.h.containsKey(agent))
+		{
+			grid1 = new Grid();
+			road_to.h.put(agent,grid1);
+		}
+		else {
+		
+		grid1 = road_to.h.get(agent);
+		}
+				
+		
+		try {
+            Literal pattern = Literal.parseLiteral("obstacle_at(_,_)");
+			
+			//String obstacleXY = ((StringTerm)pattern).getString();
+            Iterator<Literal> i = ts.getAg().getBB().getCandidateBeliefs(pattern, un);
+            ListTerm result = new ListTermImpl();
+            while (i.hasNext()) {
+                Literal l = i.next();
+				String functor;
+				
+				functor = l.getFunctor();
+				if(!functor.equals("obstacle_at") )
+				{
+					continue;
+				}
+				Term[] term = l.getTermsArray();
+				int obstacleX = (int)((NumberTerm) args[0]).solve();
+				int obstacleY = (int)((NumberTerm) args[1]).solve();
+				grid1.setObstacle(obstacleX,obstacleY);
+				//if () {
+                   
+				//}
+			}
+			IStack<Point> path;
+			path = aStar.aStar.getPath(s, d, grid1);
+			
+            return un.unifies(args[5],path.getTop());
+			
+			} catch (Exception e) {
+            //logger.warning("Error in internal action 'get_rules'! "+e);
+		}
+        
+		
+		
+        
+		
+		
+        // everything ok, so returns true
+		
+        return true;
+		
+	}
+	
+}
+
+
